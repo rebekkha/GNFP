@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GlowNest Premium - Diagnostic Suite</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="icon" href="image/faceanalysis.jpg" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: linear-gradient(135deg, #12030a 0%, #1f0511 50%, #2d0818 100%);
+      overflow-x: hidden;
+    }
+    .glass-card {
+      background: rgba(255, 240, 243, 0.04);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .text-glow {
+      text-shadow: 0 0 15px rgba(229, 169, 180, 0.4);
+    }
+    .laser-line {
+      animation: laserMove 2.8s ease-in-out infinite;
+    }
+    @keyframes laserMove {
+      0%, 100% { top: 0%; opacity: 0.3; }
+      50% { top: 100%; opacity: 1; }
+    }
+    .app-screen {
+      display: none;
+    }
+    .app-screen.active {
+      display: block;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-white pb-24">
+
+  <div id="ambient-glow" class="absolute top-0 left-1/3 w-[600px] h-[600px] bg-[#ffb6c1]/5 rounded-full filter blur-[140px] pointer-events-none transition-transform duration-700"></div>
+
+  <header class="w-full px-6 md:px-12 py-5 flex justify-between items-center bg-black/40 backdrop-blur-md border-b border-white/5 relative z-50">
+    <div class="flex items-center gap-3 cursor-pointer" onclick="navigateTo('landing')">
+      <div class="w-8 h-8 bg-[#e5a9b4] rounded-lg flex items-center justify-center rotate-45 shadow-lg shadow-[#e5a9b4]/20">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#12030a] -rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275Z"/></svg>
+      </div>
+      <h1 class="text-lg font-bold tracking-[0.2em] text-glow">GlowNest - Facial Products</h1>
+    </div>
+
+    <div class="flex items-center gap-6">
+      <a href="http://127.0.0.1:5502/index.html" class="text-[11px] font-bold text-white/60 hover:text-[#e5a9b4] uppercase tracking-widest transition-colors">
+  Back to Store Home
+</a>
+      
+      <div id="header-profile-target" class="relative group">
+        <a href="javascript:void(0)" onclick="handleProfileIconClick()" class="scanner-profile-link w-9 h-9 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-white/80 hover:text-[#e5a9b4] transition-all" title="Open Photo Scanner">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="scanner-profile-icon w-5 h-5">
+            <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 mt-12 relative z-10">
+
+    <section id="screen-landing" class="app-screen active text-center py-12">
+      <div class="glass-card p-12 rounded-[2.5rem] max-w-3xl mx-auto border border-white/10">
+        <span class="text-[#e5a9b4] tracking-[0.35em] text-[10px] font-bold uppercase block mb-3">Skin Intelligence Matrix</span>
+        <h2 class="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight leading-tight">Reveal Your True Complexion Signature</h2>
+        <p class="text-white/60 text-sm md:text-base font-light max-w-xl mx-auto mb-10 leading-relaxed">
+          Access automated biometric skin diagnostics to find your perfect routine. Register your account to activate the diagnostic scanner panel.
+        </p>
+        <button onclick="handleProfileIconClick()" class="bg-gradient-to-r from-[#e5a9b4] to-[#bd7683] text-[#12030a] font-bold text-xs uppercase tracking-widest px-8 py-3.5 rounded-full shadow-lg hover:scale-103 transition-transform">
+          Initialize Hub Core
+        </button>
+      </div>
+    </section>
+
+    <section id="screen-registration" class="app-screen max-w-md mx-auto">
+      <div class="glass-card p-8 rounded-3xl shadow-xl border border-white/10">
+        <div class="text-center mb-6">
+          <h3 class="text-2xl font-bold text-white">Create Premium Token</h3>
+          <p class="text-white/40 text-[10px] uppercase tracking-widest mt-1">Provide credentials to initialize scanner telemetry</p>
+        </div>
+
+        <form onsubmit="handleRegistrationSubmit(event)" class="space-y-4">
+          <div class="flex flex-col items-center mb-2">
+            <div onclick="document.getElementById('file-input').click()" class="w-20 h-20 rounded-full border border-dashed border-[#e5a9b4]/40 flex items-center justify-center cursor-pointer hover:border-[#e5a9b4] bg-white/5 relative overflow-hidden group">
+              <img id="reg-avatar-preview" class="w-full h-full object-cover hidden">
+              <span id="reg-avatar-icon" class="text-[#e5a9b4]/60 group-hover:text-[#e5a9b4] text-xs font-medium">Add Photo</span>
+            </div>
+            <input type="file" id="file-input" onchange="previewUserAvatar(event)" class="hidden" accept="image/*">
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-[10px] text-[#e5a9b4] uppercase tracking-wider font-bold">Full Name</label>
+            <input required type="text" id="reg-name" placeholder="M. Rebekkha Thavamani" class="w-full bg-black/30 border border-white/10 rounded-xl py-2.5 px-4 text-xs text-white focus:border-[#e5a9b4] outline-none">
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-[10px] text-[#e5a9b4] uppercase tracking-wider font-bold">Email Secure Node</label>
+            <input required type="email" id="reg-email" placeholder="rebekkhathavamani@gmail.com" class="w-full bg-black/30 border border-white/10 rounded-xl py-2.5 px-4 text-xs text-white focus:border-[#e5a9b4] outline-none">
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-1">
+              <label class="text-[10px] text-[#e5a9b4] uppercase tracking-wider font-bold">Secure Contact Phone</label>
+              <input required type="tel" id="reg-phone" placeholder="+91 9345003531" class="w-full bg-black/30 border border-white/10 rounded-xl py-2.5 px-4 text-xs text-white focus:border-[#e5a9b4] outline-none">
+            </div>
+            <div class="space-y-1">
+              <label class="text-[10px] text-[#e5a9b4] uppercase tracking-wider font-bold">Postal Code</label>
+              <input required type="text" id="reg-pin" placeholder="638011" class="w-full bg-black/30 border border-white/10 rounded-xl py-2.5 px-4 text-xs text-white focus:border-[#e5a9b4] outline-none">
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-[10px] text-[#e5a9b4] uppercase tracking-wider font-bold">Delivery Vector Address</label>
+            <textarea required id="reg-address" placeholder="M/303, MUTHAMPALAIYA HOUSING UNIT -1, Erode..." class="w-full bg-black/30 border border-white/10 rounded-xl py-2 px-4 text-xs text-white min-h-[60px] focus:border-[#e5a9b4] outline-none resize-none"></textarea>
+          </div>
+
+          <div id="otp-intercept-container" class="hidden space-y-1 pt-1">
+            <label class="text-[10px] text-[#e5a9b4] font-bold uppercase block">Verification Key</label>
+            <input type="text" id="reg-otp" placeholder="Enter Parameter: 1234" class="w-full bg-white/5 border border-[#e5a9b4]/40 rounded-xl py-2 px-4 text-center text-xs tracking-[0.3em] text-white outline-none">
+            <p id="otp-error-node" class="hidden text-[9px] text-red-400 font-bold uppercase text-center pt-1">Key error. Use activation code "1234"</p>
+          </div>
+
+          <button type="submit" id="submit-auth-btn" class="w-full bg-gradient-to-r from-[#e5a9b4] to-[#bd7683] text-[#12030a] py-3 rounded-xl text-xs uppercase tracking-widest font-bold mt-2">
+            Transmit Secure Code
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <section id="screen-decision" class="app-screen max-w-md mx-auto text-center">
+      <div class="glass-card p-10 rounded-3xl border border-white/10">
+        <h3 class="text-2xl font-bold mb-2">Welcome, <span id="decision-greeting-name" class="text-[#e5a9b4]"></span></h3>
+        <p class="text-white/60 text-xs mb-8">Do you already know your personal skin type, or would you like to run a live facial analysis scan?</p>
+        
+        <div class="space-y-3">
+          <button onclick="navigateTo('scanner')" class="w-full bg-gradient-to-r from-[#e5a9b4] to-[#bd7683] text-[#12030a] font-bold text-xs uppercase tracking-widest py-3.5 rounded-xl shadow-md hover:scale-102 transition-transform">
+            Run AI Face Scanner
+          </button>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="relative inline-block text-left w-full">
+              <button onclick="toggleQuickSelectDropdown()" class="w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl text-[10px] uppercase tracking-widest font-bold transition-all text-white/80 text-center">
+                I know my skin ▾
+              </button>
+              <div id="quick-skin-dropdown" class="hidden absolute left-0 mt-2 w-full glass-card rounded-xl shadow-2xl p-2 z-50">
+                <button onclick="skipDirectToResults('Normal')" class="w-full text-left px-3 py-2 text-xs hover:text-[#e5a9b4] transition-colors">Normal Skin</button>
+                <button onclick="skipDirectToResults('Dry')" class="w-full text-left px-3 py-2 text-xs hover:text-[#e5a9b4] transition-colors">Dry Skin</button>
+                <button onclick="skipDirectToResults('Oily')" class="w-full text-left px-3 py-2 text-xs hover:text-[#e5a9b4] transition-colors">Oily Skin</button>
+                <button onclick="skipDirectToResults('Sensitive')" class="w-full text-left px-3 py-2 text-xs hover:text-[#e5a9b4] transition-colors">Sensitive Skin</button>
+              </div>
+            </div>
+            <button 
+    onclick="window.location.href='http://127.0.0.1:5502/index.html'" 
+    class="py-2.5 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl text-[10px] uppercase tracking-widest font-bold transition-all text-white/80">
+    Skip to Home
+</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-scanner" class="app-screen max-w-2xl mx-auto">
+      <div class="text-center mb-6">
+        <h3 class="text-3xl font-bold italic">Diagnostic Scanning Ingestion</h3>
+        <p class="text-[#e5a9b4] uppercase tracking-widest text-[10px] font-semibold mt-1">Leverage live device streams or select local data folders</p>
+      </div>
+
+      <div class="flex bg-white/5 p-1 rounded-full border border-white/10 max-w-xs mx-auto mb-6">
+        <button id="mode-selector-cam" onclick="toggleInputMethod('live_camera')" class="flex-1 py-1.5 text-[10px] uppercase tracking-wider font-bold rounded-full bg-[#e5a9b4] text-[#12030a] transition-all">Live Stream</button>
+        <button id="mode-selector-file" onclick="toggleInputMethod('local_folder')" class="flex-1 py-1.5 text-[10px] uppercase tracking-wider font-bold rounded-full text-white/60 hover:text-white transition-all">Folder File</button>
+      </div>
+
+      <div class="relative aspect-video glass-card rounded-3xl overflow-hidden border border-[#e5a9b4]/20 bg-black/50 shadow-inner">
+        
+        <div id="video-canvas-cam" class="w-full h-full flex flex-col items-center justify-center text-white/30 relative">
+          <video id="hardware-webcam-element" autoplay playsinline class="w-full h-full object-cover hidden"></video>
+          <div id="cam-hardware-error-fallback" class="text-center p-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mx-auto mb-2 text-[#e5a9b4]/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <p class="text-xs font-medium text-white/70">Connecting Secure Hardware Media Link Stream...</p>
+          </div>
+          <canvas id="hardware-snapshot-canvas" class="hidden absolute inset-0 w-full h-full object-cover"></canvas>
+        </div>
+
+        <div id="video-canvas-file" class="w-full h-full hidden flex-col items-center justify-center text-white/40 hover:text-[#e5a9b4] cursor-pointer transition-colors" onclick="document.getElementById('scanner-file').click()">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mb-2 stroke-1" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span class="text-xs uppercase tracking-wider">Browse Target Folders Payload</span>
+          <input type="file" id="scanner-file" onchange="processScannerFolderUpload(event)" class="hidden" accept="image/*">
+        </div>
+
+        <div id="laser-line-element" class="hidden absolute left-0 w-full h-0.5 bg-[#e5a9b4] shadow-[0_0_12px_#e5a9b4] laser-line z-30 pointer-events-none"></div>
+
+        <div id="scanner-loader-panel" class="hidden absolute inset-0 bg-black/75 backdrop-blur-sm z-40 flex items-center justify-center">
+          <div class="text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-[#e5a9b4] animate-spin mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>
+            <span class="text-xs font-mono uppercase tracking-widest text-[#e5a9b4]">Analyzing Biomarker Face Signature...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-center gap-3 mt-5">
+        <button id="btn-scanner-action" onclick="handleScannerActionClick()" class="bg-gradient-to-r from-[#e5a9b4] to-[#bd7683] text-[#12030a] font-bold text-[11px] uppercase tracking-wider px-6 py-2.5 rounded-full shadow-md">
+          Capture Photo Source
+        </button>
+        <button id="btn-scanner-reset" onclick="clearScannerConsole()" class="hidden px-4 py-2 border border-white/10 hover:bg-white/5 rounded-full text-[10px] uppercase tracking-wider font-bold text-white/60">
+          Reset Console
+        </button>
+      </div>
+    </section>
+
+    <section id="screen-results" class="app-screen space-y-8">
+      <div class="text-center">
+        <div class="glass-card p-8 rounded-[2rem] max-w-2xl mx-auto border border-[#e5a9b4]/20 relative overflow-hidden">
+          <span class="text-white/30 uppercase tracking-widest text-[9px] font-bold block mb-1">Diagnostic Classification Array Verified</span>
+          <h2 class="text-3xl md:text-4xl font-extrabold mb-4">
+            Aesthetic Matrix: <span id="report-skin-output" class="text-[#e5a9b4] italic"></span> Skin
+          </h2>
+          
+          <div class="text-left text-xs text-white/70 space-y-2 max-w-sm mx-auto bg-black/30 p-4 rounded-xl border border-white/5 font-light">
+            <p><strong class="text-[#e5a9b4] uppercase text-[9px] tracking-wider font-bold">Account Name:</strong> <span id="lbl-name" class="text-white font-medium"></span></p>
+            <p><strong class="text-[#e5a9b4] uppercase text-[9px] tracking-wider font-bold">Secure Contact:</strong> <span id="lbl-phone" class="text-white"></span></p>
+            <p><strong class="text-[#e5a9b4] uppercase text-[9px] tracking-wider font-bold">Destination Area:</strong> <span id="lbl-addr" class="text-white"></span></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="max-w-3xl mx-auto glass-card rounded-2xl p-6 border border-emerald-900/20 bg-emerald-950/5">
+        <div class="flex items-center gap-2 mb-3 text-emerald-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
+          <h4 class="text-xs uppercase font-bold tracking-widest">Natural Home Treatment Tip remedies Guidance</h4>
+        </div>
+        <p id="natural-remedy-tip-node" class="text-xs text-white/70 leading-relaxed font-light"></p>
+      </div>
+
+      <div class="space-y-4 max-w-3xl mx-auto">
+        <h4 class="text-xs font-bold uppercase tracking-[0.3em] text-[#e5a9b4] text-center">Curated Facial Routine Catalog Curation</h4>
+        <div id="product-catalog-injection-node" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          </div>
+      </div>
+
+      <div class="text-center pt-4">
+       <button 
+    onclick="window.location.href='http://127.0.0.1:5502/index.html'" 
+    class="bg-gradient-to-r from-[#e5a9b4] to-[#bd7683] text-[#12030a] font-bold text-xs uppercase tracking-widest px-8 py-3.5 rounded-xl transition-all shadow-md hover:scale-103">
+    Confirm &amp; Return to Store Home
+</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    let appState = {
+      isRegistered: false,
+      isOtpSent: false,
+      scannerMode: 'live_camera',
+      activeStream: null,
+      snapshotPayload: null,
+      user: { name: '', email: '', phone: '', pinCode: '', address: '', pic: null }
+    };
+
+    // Curated 4-Product Routine Database with targeted imagery parameters for each type
+    const SKIN_PRODUCTS_DATABASE = {
+      Dry: {
+        tip: "Incorporate organic honey mask layers and pure aloe juice extract to lock essential moisture barriers back into dry surface tissue.",
+        items: [
+          { name: "Hydra Glow Serum", desc: "Squalane and hyaluronic moisture complex.", url: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=250&q=80" },
+          { name: "Ceramide Glaze", desc: "Deep barrier recovery lipid cream.", url: "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?auto=format&fit=crop&w=250&q=80" },
+          { name: "Nourishing Milk Wash", desc: "Gentle non-stripping baseline cleanser.", url: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=250&q=80" },
+          { name: "Avocado Sleep Mask", desc: "Overnight intense hydration therapy.", url: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=250&q=80" }
+        ]
+      },
+      Oily: {
+        tip: "Utilize clarifying green tea infusions and dilute tea tree oil balances to regulate native sebaceous oil parameters without drying.",
+        items: [
+          { name: "Salicylic Clarifier", desc: "Micro-exfoliates deep inside pore linings.", url: "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=250&q=80" },
+          { name: "Mattifying Aqua Gel", desc: "Weightless oil-free balancing hydration hydration.", url: "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=250&q=80" },
+          { name: "Charcoal Mud Mask", desc: "Pulls toxins and targets oil grids.", url: "https://images.unsplash.com/photo-1567894192231-d22d9c12214d?auto=format&fit=crop&w=250&q=80" },
+          { name: "Zinc Pore Refining Spray", desc: "Controls midday shine instantly.", url: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=250&q=80" }
+        ]
+      },
+      Sensitive: {
+        tip: "Rely heavily on concentrated chamomile essences and chilled fresh cucumber compress rounds to drop localized skin redness quickly.",
+        items: [
+          { name: "Centella Relief Essence", desc: "Soothes internal tissue inflammation maps.", url: "https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?auto=format&fit=crop&w=250&q=80" },
+          { name: "Barrier Shield Cream", desc: "Ultra hypoallergenic scent-free formula.", url: "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?auto=format&fit=crop&w=250&q=80" },
+          { name: "Oat Cream Foam Cleanser", desc: "Calms reactivity during wash rituals.", url: "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&w=250&q=80" },
+          { name: "Allantoin Soothing Gel", desc: "Cooling fluid relief layer for delicate cells.", url: "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?auto=format&fit=crop&w=250&q=80" }
+        ]
+      },
+      Normal: {
+        tip: "Maintain balanced cell metrics using mild vitamin C drops and clean fluid hydrators to seal your healthy standard tone.",
+        items: [
+          { name: "Daily Vitamin C Drop", desc: "Boosts ambient brightness and tone shield.", url: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=250&q=80" },
+          { name: "Hydra Balance Elixir", desc: "Maintains optimal water-to-oil homeostasis.", url: "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?auto=format&fit=crop&w=250&q=80" },
+          { name: "Amino Cleansing wash", desc: "Purifies impurities while keeping barrier intact.", url: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=250&q=80" },
+          { name: "Algae Infused Therapy", desc: "Weekly booster to retain timeless hydration loops.", url: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=250&q=80" }
+        ]
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const stored = localStorage.getItem('glownest_premium_user');
+      if (stored) {
+        appState.user = JSON.parse(stored);
+        appState.isRegistered = true;
+        rebuildHeaderIconState();
+      }
+      
+      window.addEventListener('mousemove', (e) => {
+        const x = (e.clientX / window.innerWidth) * 40 - 20;
+        const y = (e.clientY / window.innerHeight) * 40 - 20;
+        document.getElementById('ambient-glow').style.transform = `translate(${x}px, ${y}px)`;
+      });
+    });
+
+    function navigateTo(screenId) {
+      document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(`screen-${screenId}`).classList.add('active');
+      
+      if (screenId === 'scanner' && appState.scannerMode === 'live_camera') {
+        initializeHardwareWebcam();
+      } else {
+        stopHardwareWebcam();
+      }
+    }
+
+    function handleProfileIconClick() {
+      if (appState.isRegistered) {
+        document.getElementById('decision-greeting-name').textContent = appState.user.name;
+        navigateTo('decision');
+      } else {
+        appState.isOtpSent = false;
+        document.getElementById('otp-intercept-container').classList.add('hidden');
+        document.getElementById('submit-auth-btn').textContent = "Transmit Secure Code";
+        navigateTo('registration');
+      }
+    }
+
+    function toggleQuickSelectDropdown() {
+      const drop = document.getElementById('quick-skin-dropdown');
+      drop.classList.toggle('hidden');
+    }
+
+    function handleHomeLinkFallback() {
+      localStorage.setItem('glownest_premium_user', JSON.stringify(appState.user));
+      window.location.href = BACK_HOME_PATH;
+    }
+
+    function previewUserAvatar(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = function() {
+          appState.user.pic = reader.result;
+          const preview = document.getElementById('reg-avatar-preview');
+          preview.src = reader.result;
+          preview.classList.remove('hidden');
+          document.getElementById('reg-avatar-icon').classList.add('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function handleRegistrationSubmit(event) {
+      event.preventDefault();
+      const nameVal = document.getElementById('reg-name').value;
+      const emailVal = document.getElementById('reg-email').value;
+      const phoneVal = document.getElementById('reg-phone').value;
+      const pinVal = document.getElementById('reg-pin').value;
+      const addressVal = document.getElementById('reg-address').value;
+
+      if (!appState.isOtpSent) {
+        appState.isOtpSent = true;
+        document.getElementById('otp-intercept-container').classList.remove('hidden');
+        document.getElementById('submit-auth-btn').textContent = "Verify Security Code Matrix";
+        return;
+      }
+
+      const otpVal = document.getElementById('reg-otp').value;
+      if (otpVal === '1234') {
+        appState.isRegistered = true;
+        appState.user = { ...appState.user, name: nameVal, email: emailVal, phone: phoneVal, pinCode: pinVal, address: addressVal };
+        localStorage.setItem('glownest_premium_user', JSON.stringify(appState.user));
+        document.getElementById('otp-error-node').classList.add('hidden');
+        rebuildHeaderIconState();
+        
+        document.getElementById('decision-greeting-name').textContent = appState.user.name;
+        navigateTo('decision');
+      } else {
+        document.getElementById('otp-error-node').classList.remove('hidden');
+      }
+    }
+
+    function rebuildHeaderIconState() {
+      const targetWrapper = document.getElementById('header-profile-target');
+      if (appState.isRegistered) {
+        let contentLayout = `
+          <div class="w-9 h-9 rounded-full bg-[#e5a9b4]/10 flex items-center justify-center font-bold text-xs border border-[#e5a9b4]/30 text-[#e5a9b4]">
+            ${appState.user.name.charAt(0).toUpperCase()}
+          </div>
+        `;
+        if (appState.user.pic) {
+          contentLayout = `<img src="${appState.user.pic}" class="w-9 h-9 rounded-full object-cover border border-[#e5a9b4]/50 shadow-md">`;
+        }
+
+        targetWrapper.innerHTML = `
+          <div class="relative inline-block group">
+            <button onclick="handleProfileIconClick()" class="focus:outline-none cursor-pointer flex items-center">
+              ${contentLayout}
+            </button>
+            <div class="absolute right-0 mt-2 w-48 glass-card rounded-xl p-3 opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-200 z-50">
+              <p class="text-[11px] font-bold truncate">${appState.user.name}</p>
+              <p class="text-[9px] text-[#e5a9b4]/70 truncate mb-2">${appState.user.email}</p>
+              <div class="h-px bg-white/5 my-1"></div>
+              <button onclick="clearSystemSession()" class="w-full text-left text-[10px] text-red-400 font-bold uppercase tracking-wider pt-1">Logout Session</button>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function clearSystemSession() {
+      localStorage.removeItem('glownest_premium_user');
+      appState.isRegistered = false;
+      appState.user = { name: '', email: '', phone: '', pinCode: '', address: '', pic: null };
+      
+      document.getElementById('header-profile-target').innerHTML = `
+        <a href="javascript:void(0)" onclick="handleProfileIconClick()" class="scanner-profile-link w-9 h-9 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-white/80 hover:text-[#e5a9b4] transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+            <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      `;
+      navigateTo('landing');
+    }
+
+    async function initializeHardwareWebcam() {
+      const video = document.getElementById('hardware-webcam-element');
+      const fallbackMsg = document.getElementById('cam-hardware-error-fallback');
+      
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+        appState.activeStream = stream;
+        video.srcObject = stream;
+        video.classList.remove('hidden');
+        fallbackMsg.classList.add('hidden');
+      } catch (err) {
+        console.warn("Using simulation fallback loop.", err);
+        fallbackMsg.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mx-auto mb-2 text-[#e5a9b4]/40 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19 4h-1.5a3 3 0 0 1-2.45-1.28L14 1.35A1 1 0 0 0 13.24 1h-2.48a1 1 0 0 0-.76.35L8.95 2.72A3 3 0 0 1 6.5 4H5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3Z"/></svg>
+          <p class="text-xs text-[#e5a9b4] uppercase font-bold tracking-wider">Simulated Stream Matrix Active</p>
+        `;
+      }
+    }
+
+    function stopHardwareWebcam() {
+      if (appState.activeStream) {
+        appState.activeStream.getTracks().forEach(track => track.stop());
+        appState.activeStream = null;
+      }
+      const video = document.getElementById('hardware-webcam-element');
+      if (video) video.classList.add('hidden');
+    }
+
+    function toggleInputMethod(method) {
+      appState.scannerMode = method;
+      clearScannerConsole();
+
+      const btnCam = document.getElementById('mode-selector-cam');
+      const btnFile = document.getElementById('mode-selector-file');
+      const boxCam = document.getElementById('video-canvas-cam');
+      const boxFile = document.getElementById('video-canvas-file');
+
+      if (method === 'live_camera') {
+        btnCam.className = "flex-1 py-1.5 text-[10px] uppercase tracking-wider font-bold rounded-full bg-[#e5a9b4] text-[#12030a]";
+        btnFile.className = "flex-1 py-1.5 text-[10px] uppercase tracking-wider font-bold rounded-full text-white/60 hover:text-white";
+        boxCam.classList.remove('hidden');
+        boxFile.classList.add('hidden');
+        initializeHardwareWebcam();
+      } else {
+        btnFile.className = "flex-1 py-1.5 text-[10px] uppercase tracking-wider font-bold rounded-full bg-[#e5a9b4] text-[#12030a]";
+        btnCam.className = "flex-1 py-1.5 text-[10px] uppercase tracking-wider font-bold rounded-full text-white/60 hover:text-white";
+        boxFile.classList.remove('hidden');
+        boxCam.classList.add('hidden');
+        stopHardwareWebcam();
+      }
+    }
+
+    function processScannerFolderUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = function() {
+          appState.snapshotPayload = reader.result;
+          renderSnapshotInConsole();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // FIX: Core event controller to handle image freeze vs running layout switch
+    function handleScannerActionClick() {
+      const actionBtn = document.getElementById('btn-scanner-action');
+      
+      // Step 1: Capture snapshot frame if none exists
+      if (!appState.snapshotPayload) {
+        if (appState.scannerMode === 'live_camera') {
+          appState.snapshotPayload = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600";
+          renderSnapshotInConsole();
+        }
+        return;
+      }
+
+      // Step 2: Run processing and layout switch if snapshot exists
+      const laser = document.getElementById('laser-line-element');
+      const loader = document.getElementById('scanner-loader-panel');
+      
+      laser.classList.remove('hidden');
+      loader.classList.remove('hidden');
+
+      setTimeout(() => {
+        laser.classList.add('hidden');
+        loader.classList.add('hidden');
+
+        const classes = ['Normal', 'Dry', 'Oily', 'Sensitive'];
+        const compiledResult = classes[Math.floor(Math.random() * classes.length)];
+        renderDiagnosticReportView(compiledResult);
+      }, 3000);
+    }
+
+    function renderSnapshotInConsole() {
+      if (appState.scannerMode === 'live_camera') {
+        const canvas = document.getElementById('hardware-snapshot-canvas');
+        const video = document.getElementById('hardware-webcam-element');
+        const context = canvas.getContext('2d');
+        
+        canvas.width = 640;
+        canvas.height = 480;
+        if (appState.activeStream) {
+          context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        } else {
+          const fallbackImg = new Image();
+          fallbackImg.crossOrigin = "anonymous";
+          fallbackImg.src = appState.snapshotPayload;
+          fallbackImg.onload = () => context.drawImage(fallbackImg, 0, 0, canvas.width, canvas.height);
+        }
+        canvas.classList.remove('hidden');
+        video.classList.add('hidden');
+      } else {
+        const folderBox = document.getElementById('video-canvas-file');
+        folderBox.style.backgroundImage = `url(${appState.snapshotPayload})`;
+        folderBox.style.backgroundSize = "cover";
+        folderBox.style.backgroundPosition = "center";
+        folderBox.innerHTML = "";
+      }
+
+      document.getElementById('btn-scanner-action').textContent = "Execute AI Skin Analysis ⚡";
+      document.getElementById('btn-scanner-reset').classList.remove('hidden');
+    }
+
+    function clearScannerConsole() {
+      appState.snapshotPayload = null;
+      document.getElementById('hardware-snapshot-canvas').classList.add('hidden');
+      
+      const folderBox = document.getElementById('video-canvas-file');
+      folderBox.style.backgroundImage = "none";
+      folderBox.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mb-2 stroke-1" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span class="text-xs uppercase tracking-wider">Browse Target Folders Payload</span>
+        <input type="file" id="scanner-file" onchange="processScannerFolderUpload(event)" class="hidden" accept="image/*">
+      `;
+
+      document.getElementById('btn-scanner-action').textContent = "Capture Photo Source";
+      document.getElementById('btn-scanner-reset').classList.add('hidden');
+      
+      if (appState.scannerMode === 'live_camera') {
+        initializeHardwareWebcam();
+      }
+    }
+
+    function skipDirectToResults(explicitType) {
+      document.getElementById('quick-skin-dropdown').classList.add('hidden');
+      renderDiagnosticReportView(explicitType);
+    }
+
+    function renderDiagnosticReportView(skinType) {
+      document.getElementById('report-skin-output').textContent = skinType;
+      
+      document.getElementById('lbl-name').textContent = appState.user.name;
+      document.getElementById('lbl-phone').textContent = appState.user.phone;
+      document.getElementById('lbl-addr').textContent = appState.user.address + " [" + appState.user.pinCode + "]";
+
+      const matchGroup = SKIN_PRODUCTS_DATABASE[skinType];
+      document.getElementById('natural-remedy-tip-node').textContent = matchGroup.tip;
+
+      const catalogGrid = document.getElementById('product-catalog-injection-node');
+      catalogGrid.innerHTML = "";
+
+      matchGroup.items.forEach(product => {
+        catalogGrid.innerHTML += `
+          <div class="glass-card rounded-2xl p-3 flex flex-col justify-between border border-white/5 hover:border-[#e5a9b4]/40 transition-all duration-300">
+            <div>
+              <div class="aspect-square rounded-xl overflow-hidden bg-black/40 mb-2 border border-white/5">
+                <img src="${product.url}" alt="${product.name}" class="w-full h-full object-cover filter brightness-95">
+              </div>
+              <h5 class="text-xs font-bold text-white tracking-tight mb-0.5 truncate">${product.name}</h5>
+              <p class="text-[9px] text-white/50 leading-tight mb-2 line-clamp-2">${product.desc}</p>
+            </div>
+            <span class="text-[9px] text-[#e5a9b4] uppercase tracking-wider font-bold block bg-[#e5a9b4]/10 border border-[#e5a9b4]/20 py-1 text-center rounded-lg">Curation Active</span>
+          </div>
+        `;
+      });
+
+      navigateTo('results');
+    }
+  </script>
+</body>
+</html>

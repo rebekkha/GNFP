@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlowNext | Imperial Collection</title>
+    <link rel="icon" href="image/Screenshot 2025-05-16 161600 (1).png" type="image/png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --royal-gold: #c79b2a;
+            --deep-brown: #652404;
+            --glass-brown: rgba(99, 32, 8, 0.85);
+            --accent-gold: #e0be55;
+            --rich-brown: #5c200c;
+            --cream: #f6efe6;
+        }
+
+        body {
+            margin: 0; padding: 0; min-height: 100vh;
+            font-family: 'Garamond', serif; color: var(--cream);
+            background: linear-gradient(135deg, var(--deep-brown) 0%, var(--rich-brown) 60%, #582404 100%);
+            background-attachment: fixed;
+        }
+
+        /* Navbar */
+        .navbar-custom { padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(20,12,8,0.6); border-bottom: 1px solid var(--royal-gold); }
+        .nav-icon { font-size: 28px; color: var(--royal-gold); cursor: pointer; transition: 0.3s; }
+        .nav-icon:hover { transform: scale(1.1); color: var(--accent-gold); }
+
+        /* Premium Seamless Banner Slider */
+        .banner-carousel {
+            width: 100%;
+            background: #140c08;
+            border-bottom: 2px solid var(--royal-gold);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        .banner-carousel .carousel-item {
+            width: 100%;
+            aspect-ratio: 415 / 100; 
+            overflow: hidden;
+        }
+        .banner-carousel .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+        }
+
+        /* Golden Custom Controls for Banner Buttons */
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-image: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'bootstrap-icons';
+            font-size: 2rem;
+            color: var(--royal-gold);
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .carousel-control-prev-icon::before { content: "\f22f"; } /* Chevron left icon */
+        .carousel-control-next-icon::before { content: "\f231"; } /* Chevron right icon */
+
+        .banner-carousel .carousel-control-prev:hover .carousel-control-prev-icon,
+        .banner-carousel .carousel-control-next:hover .carousel-control-next-icon {
+            color: var(--accent-gold);
+            transform: scale(1.15);
+        }
+
+        /* Navigation Cards */
+        .skin-type-card {
+            background: var(--glass-brown);
+            border: 2px solid var(--royal-gold);
+            border-radius: 15px;
+            padding: 25px;
+            cursor: pointer;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            height: 100%;
+            text-align: center;
+            color: var(--cream);
+        }
+        .skin-type-card:hover { transform: translateY(-10px); background: var(--royal-gold); color: var(--deep-brown); }
+
+        /* Product Cards */
+        .product-card {
+            width: 320px; padding: 20px; margin: 15px; text-align: center;
+            background: var(--glass-brown); backdrop-filter: blur(8px);
+            border: 1.5px solid rgba(199, 155, 42, 0.25); border-radius: 20px;
+            display: flex; flex-direction: column;
+        }
+        .product-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 10px; border: 1px solid var(--royal-gold); margin-bottom: 15px; background: var(--cream); }
+        
+        .steps-box { text-align: left; background: rgba(255, 250, 240, 0.04); padding: 10px; border-radius: 8px; margin-top: 15px; font-size: 0.95em; border: 0.5px solid rgba(199,155,42,0.12); }
+        .steps-box b { color: var(--royal-gold); display: block; margin-bottom: 5px; }
+
+        .btn-acquire {
+            background: linear-gradient(180deg, var(--accent-gold), #b8860b);
+            border: none; color: var(--deep-brown); font-weight: bold;
+            border-radius: 50px; padding: 10px 25px; width: 100%;
+            margin-top: 15px; transition: 0.3s; box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+        }
+        .btn-acquire:hover { opacity: 0.95; transform: translateY(-2px); }
+
+        .page-view { transition: 0.5s; display: none; }
+        .active-view { display: block; }
+        
+        .order-item {
+            border-left: 4px solid var(--royal-gold);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px; margin-bottom: 15px; border-radius: 0 15px 15px 0;
+        }
+
+        .modal-content { background: var(--deep-brown); border: 2px solid var(--royal-gold); border-radius: 20px; color: var(--cream); }
+        .form-control { background: #fff8f0; border: none; margin-bottom: 15px; padding: 12px; color: #4a2e18; border-radius: 8px; }
+        .guide-step { display: none; }
+        .guide-step.active { display: block; }
+        .star-rating { font-size: 30px; color: #444444; cursor: pointer; }
+        .star-rating.selected { color: var(--royal-gold); }
+    </style>
+</head>
+<body onload="initApp()">
+
+<nav class="navbar-custom">
+    <div>
+        <i class="bi bi-info-circle nav-icon me-3" onclick="openGuide()"></i>
+        <i class="bi bi-house-door nav-icon" onclick="showPage('homePage')"></i>
+    </div>
+    <h2 style="color: var(--royal-gold); letter-spacing: 4px; font-weight: bold; margin: 0;">GLOWNEXT</h2>
+    <div class="position-relative" onclick="showPage('orderPage')" style="cursor: pointer;">
+        <i class="bi bi-cart-fill nav-icon"></i>
+        <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 10px;">0</span>
+    </div>
+</nav>
+
+<div id="topBannerCarousel" class="carousel slide banner-carousel" data-bs-ride="carousel" data-bs-interval="4000">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="image/suncreambf1.gif" alt="Shaadi Gift Pack Banner">
+        </div>
+        <div class="carousel-item">
+            <img src="image/suncreambf2.webp" alt="Imperial Collection Luxury Pack">
+        </div>
+        <div class="carousel-item">
+            <img src="image/suncreambf3.webp" alt="Premium Face Formulations">
+        </div>
+        <div class="carousel-item">
+            <img src="image/suncreambf4.webp" alt="GlowNext Bridal Radiance">
+        </div>
+    </div>
+    
+    <button class="carousel-control-prev" type="button" data-bs-target="#topBannerCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#topBannerCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+<div class="modal fade" id="skinGuideModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body p-5 text-center">
+                <div id="step1" class="guide-step active">
+                    <h2 style="color: var(--royal-gold)">Identify Your Glow</h2>
+                    <p class="mt-3">Welcome to the Imperial Collection. Let's find your biological match.</p>
+                    <button class="btn-acquire" onclick="nextStep(2)">Analyze Skin <i class="bi bi-arrow-right"></i></button>
+                </div>
+                
+                <div id="step2" class="guide-step">
+                    <h4 style="color: var(--royal-gold)">Normal & Oily Types</h4>
+                    <div class="text-start mt-3">
+                        <p><b>Normal:</b> Smooth texture, balanced moisture.</p>
+                        <p><b>Oily:</b> Greasy shine, prone to breakouts.</p>
+                    </div>
+                    <div class="d-flex gap-2 mt-4">
+                        <button class="btn btn-outline-light w-50" onclick="nextStep(1)">Back</button>
+                        <button class="btn btn-warning w-50" onclick="nextStep(3)">Next</button>
+                    </div>
+                </div>
+
+                <div id="step3" class="guide-step">
+                    <h4 style="color: var(--royal-gold)">Dry & Sensitive Types</h4>
+                    <div class="text-start mt-3">
+                        <p><b>Dry:</b> Tight feeling, flaky patches.</p>
+                        <p><b>Sensitive:</b> Redness, itching, reacts easily.</p>
+                    </div>
+                    <div class="d-flex gap-2 mt-4">
+                        <button class="btn btn-outline-light w-50" onclick="nextStep(2)">Back</button>
+                        <button class="btn btn-warning w-50" onclick="nextStep(4)">Finish</button>
+                    </div>
+                </div>
+
+                <div id="step4" class="guide-step">
+                    <h3 style="color: var(--royal-gold)">Choose Your Journey</h3>
+                    <div class="row g-2 mt-3">
+                        <div class="col-6"><button class="btn btn-outline-warning w-100" onclick="filterSkin('dry')">Dry</button></div>
+                        <div class="col-6"><button class="btn btn-outline-warning w-100" onclick="filterSkin('oily')">Oily</button></div>
+                        <div class="col-6"><button class="btn btn-outline-warning w-100" onclick="filterSkin('sensitive')">Sensitive</button></div>
+                        <div class="col-6"><button class="btn btn-outline-warning w-100" onclick="filterSkin('normal')">Normal</button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="homePage" class="page-view active-view container py-5">
+    <h1 class="text-center mb-5" style="color: var(--royal-gold); font-size: 2.5rem; text-shadow: 2px 2px 10px #000;">Women's Imperial Skin Care</h1>
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-4 col-lg-2"><div class="skin-type-card" onclick="filterSkin('normal')"><h4>Normal</h4></div></div>
+        <div class="col-md-4 col-lg-2"><div class="skin-type-card" onclick="filterSkin('oily')"><h4>Oily</h4></div></div>
+        <div class="col-md-4 col-lg-2"><div class="skin-type-card" onclick="filterSkin('dry')"><h4>Dry</h4></div></div>
+        <div class="col-md-4 col-lg-2"><div class="skin-type-card" onclick="filterSkin('sensitive')"><h4>Sensitive</h4></div></div>
+    </div>
+</div>
+
+<div id="productPage" class="page-view container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5 border-bottom pb-3 border-secondary">
+        <h2 id="filterTitle" style="color: var(--royal-gold)">Recommended Solutions</h2>
+        <button class="btn btn-outline-warning rounded-pill" onclick="showPage('homePage')">Back to Selection</button>
+    </div>
+    <div class="d-flex flex-wrap justify-content-center" id="filteredGrid"></div>
+</div>
+
+<div id="orderPage" class="page-view container py-5">
+    <div class="p-5" style="background: rgba(0,0,0,0.7); border-radius: 30px; border: 1px solid var(--royal-gold);">
+        <h2 class="text-center mb-5" style="color: var(--royal-gold)">Royal Order Ledger</h2>
+        <div id="ledgerContainer"></div>
+        <div class="text-center mt-5">
+            <button class="btn btn-warning px-5 rounded-pill" onclick="showPage('homePage')">Return to Gallery</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="orderModal" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body p-4">
+                <div id="formSection">
+                    <h3 id="orderProductName" class="text-center mb-4" style="color: var(--royal-gold)">Order Product</h3>
+                    <input type="text" id="custName" class="form-control" placeholder="Full Name">
+                    <input type="tel" id="custPhone" class="form-control" placeholder="Phone Number">
+                    <textarea id="custAddr" class="form-control" rows="3" placeholder="Full Shipping Address"></textarea>
+                    <button class="btn-acquire" onclick="processOrder()">Confirm Purchase</button>
+                    <button class="btn btn-link w-100 text-white mt-2" data-bs-dismiss="modal">Cancel</button>
+                </div>
+                <div id="ratingSection" class="text-center d-none">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                    <h3 class="mt-3">Order Recorded</h3>
+                    <p>Rate this Imperial Product:</p>
+                    <div class="mb-4">
+                        <i class="bi bi-star-fill star-rating" onclick="setRating(1)"></i>
+                        <i class="bi bi-star-fill star-rating" onclick="setRating(2)"></i>
+                        <i class="bi bi-star-fill star-rating" onclick="setRating(3)"></i>
+                        <i class="bi bi-star-fill star-rating" onclick="setRating(4)"></i>
+                        <i class="bi bi-star-fill star-rating" onclick="setRating(5)"></i>
+                    </div>
+                    <button class="btn-acquire" onclick="finalizeAndRecord()">View History</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const allProducts = [
+        { 
+            name: "R&G SunSafe", price: 599, skin: "normal sensitive dry", img: "image/suncreamf1.webp", 
+            steps: ["Cleanse thoroughly and pat skin dry.", "Warm a pea-sized amount between fingertips.", "Apply in upward, circular motions to face and neck.", "Use as the final step in your PM routine to lock in moisture."]
+        },
+        { 
+            name: "METAVERSE", price: 799, skin: "sensitive normal oily", img: "image/suncreamf2.jpg",
+            steps: ["Dampen face with lukewarm water.", "Apply 1-2 pumps of cleanser to wet palms.", "Massage gently into skin for 60 seconds, avoiding eyes.", "Rinse thoroughly and pat dry with a clean towel."]
+        },
+        { 
+            name: "mamaearth", price: 899, skin: "dry normal sensitive", img: "image/suncreamf3.avif",
+            steps: ["Apply to slightly damp skin after cleansing.", "Smooth a thin layer evenly across the face and neck.", "Press palms gently into skin to improve absorption.", "Apply twice daily (AM/PM) for a healthy skin barrier."]
+        },
+        { 
+            name: "BROEK SunScreen", price: 899, skin: "dry normal sensitive", img: "image/suncreamf4.jpg",
+            steps: ["Apply to slightly damp skin after cleansing.", "Smooth a thin layer evenly across the face and neck.", "Press palms gently into skin to improve absorption.", "Apply twice daily (AM/PM) for a healthy skin barrier."]
+        },
+        { 
+            name: "Undry Clinic", price: 899, skin: "dry normal sensitive", img: "image/suncreamf5.jpg",
+            steps: ["Apply to slightly damp skin after cleansing.", "Smooth a thin layer evenly across the face and neck.", "Press palms gently into skin to improve absorption.", "Apply twice daily (AM/PM) for a healthy skin barrier."]
+        },
+        { 
+            name: "DR.SHETH'S", price: 899, skin: "dry normal sensitive", img: "image/suncreamf6.webp",
+            steps: ["Apply to slightly damp skin after cleansing.", "Smooth a thin layer evenly across the face and neck.", "Press palms gently into skin to improve absorption.", "Apply twice daily (AM/PM) for a healthy skin barrier."]
+        },
+        { 
+            name: "THRIVE Brightening Pro Sunscreen", price: 899, skin: "dry normal sensitive", img: "image/suncreamf7.webp",
+            steps: ["Apply to slightly damp skin after cleansing.", "Smooth a thin layer evenly across the face and neck.", "Press palms gently into skin to improve absorption.", "Apply twice daily (AM/PM) for a healthy skin barrier."]
+        },
+        { 
+            name: "Aye girls", price: 899, skin: "dry normal sensitive", img: "image/suncreamf8.jpg",
+            steps: ["Apply to slightly damp skin after cleansing.", "Smooth a thin layer evenly across the face and neck.", "Press palms gently into skin to improve absorption.", "Apply twice daily (AM/PM) for a healthy skin barrier."]
+        },
+        { 
+            name: "Aqualogica GLOW DEWY", price: 899, skin: "dry normal sensitive", img: "image/suncreamf9.webp",
+            steps: ["Apply to slightly damp skin after cleansing.", "Smooth a thin layer evenly across the face and neck.", "Press palms gently into skin to improve absorption.", "Apply twice daily (AM/PM) for a healthy skin barrier."]
+        },
+        { 
+            name: "LAVENOUR VITAMIN C", price: 899, skin: "dry normal sensitive", img: "image/suncreamf10.webp",
+            steps: ["Apply to slightly damp skin after cleansing.", "Smooth a thin layer evenly across the face and neck.", "Press palms gently into skin to improve absorption.", "Apply twice daily (AM/PM) for a healthy skin barrier."]
+        },
+        { 
+            name: "KIMIRICA SunScreen", price: 899, skin: "dry normal sensitive", img: "image/suncreamf11.webp",
+            steps: ["Apply to slightly damp skin after cleansing.", "Smooth a thin layer evenly across the face and neck.", "Press palms gently into skin to improve absorption.", "Apply twice daily (AM/PM) for a healthy skin barrier."]
+        },
+        { 
+            name: "THE PINK FOUNDRY SunScreen", price: 899, skin: "dry normal sensitive", img: "image/suncreamf12.webp",
+            steps: ["Apply to slightly damp skin after cleansing.", "Smooth a thin layer evenly across the face and neck.", "Press palms gently into skin to improve absorption.", "Apply twice daily (AM/PM) for a healthy skin barrier."]
+        },
+        { 
+            name: "Lotus Skin", price: 899, skin: "dry normal sensitive", img: "image/suncreamf13.jpg",
+            steps: ["Apply to slightly damp skin after cleansing.", "Smooth a thin layer evenly across the face and neck.", "Press palms gently into skin to improve absorption.", "Apply twice daily (AM/PM) for a healthy skin barrier."]
+        },
+        { 
+            name: "Hunter Moisturizer", price: 899, skin: "dry normal sensitive", img: "image/suncreamf14.webp",
+            steps: ["Apply to slightly damp skin after cleansing.", "Smooth a thin layer evenly across the face and neck.", "Press palms gently into skin to improve absorption.", "Apply twice daily (AM/PM) for a healthy skin barrier."]
+        },
+        { 
+            name: "Hunter Moisturizer", price: 899, skin: "dry normal sensitive", img: "image/suncreamf15.jpg",
+            steps: ["Apply to slightly damp skin after cleansing.", "Smooth a thin layer evenly across the face and neck.", "Press palms gently into skin to improve absorption.", "Apply twice daily (AM/PM) for a healthy skin barrier."]
+        },
+        { 
+            name: "Hunter Moisturizer", price: 899, skin: "dry normal sensitive", img: "image/suncreamf16.webp",
+            steps: ["Apply to slightly damp skin after cleansing.", "Smooth a thin layer evenly across the face and neck.", "Press palms gently into skin to improve absorption.", "Apply twice daily (AM/PM) for a healthy skin barrier."]
+        },
+        { 
+            name: "Hunter Moisturizer", price: 899, skin: "dry normal sensitive", img: "image/suncreamf17.webp",
+            steps: ["Apply to slightly damp skin after cleansing.", "Smooth a thin layer evenly across the face and neck.", "Press palms gently into skin to improve absorption.", "Apply twice daily (AM/PM) for a healthy skin barrier."]
+        },
+        { 
+            name: "Hunter Moisturizer", price: 899, skin: "dry normal sensitive", img: "image/suncreamf18.avif",
+            steps: ["Apply to slightly damp skin after cleansing.", "Smooth a thin layer evenly across the face and neck.", "Press palms gently into skin to improve absorption.", "Apply twice daily (AM/PM) for a healthy skin barrier."]
+        },
+        { 
+            name: "Hunter Moisturizer", price: 899, skin: "dry normal sensitive", img: "image/suncreamf19.webp",
+            steps: ["Apply to slightly damp skin after cleansing.", "Smooth a thin layer evenly across the face and neck.", "Press palms gently into skin to improve absorption.", "Apply twice daily (AM/PM) for a healthy skin barrier."]
+        },
+        { 
+            name: "Hunter Moisturizer", price: 899, skin: "dry normal sensitive", img: "image/suncreamf20.webp",
+            steps: ["Apply to slightly damp skin after cleansing.", "Smooth a thin layer evenly across the face and neck.", "Press palms gently into skin to improve absorption.", "Apply twice daily (AM/PM) for a healthy skin barrier."]
+        },
+        { 
+            name: "Hunter Moisturizer", price: 899, skin: "dry normal sensitive", img: "image/suncreamf21.webp",
+            steps: ["Apply to slightly damp skin after cleansing.", "Smooth a thin layer evenly across the face and neck.", "Press palms gently into skin to improve absorption.", "Apply twice daily (AM/PM) for a healthy skin barrier."]
+        },
+        { 
+            name: "Hunter Moisturizer", price: 899, skin: "sensitive normal oily", img: "image/suncreamf22.webp",
+            steps: ["Apply a dime-sized amount to clean skin.", "Lightly massage in an upward motion to avoid dragging.", "Focus on oilier areas like the T-zone.", "Allow 2 minutes to absorb before applying SPF."]
+        },
+        { 
+            name: "Hunter Moisturizer", price: 899, skin: "sensitive normal oily", img: "image/suncreamf23.jpg",
+            steps: ["Apply a dime-sized amount to clean skin.", "Lightly massage in an upward motion to avoid dragging.", "Focus on oilier areas like the T-zone.", "Allow 2 minutes to absorb before applying SPF."]
+        },
+        { 
+            name: "Hunter Moisturizer", price: 899, skin: "sensitive normal oily", img: "image/suncreamf24.webp",
+            steps: ["Apply a dime-sized amount to clean skin.", "Lightly massage in an upward motion to avoid dragging.", "Focus on oilier areas like the T-zone.", "Allow 2 minutes to absorb before applying SPF."]
+        },
+        { 
+            name: "Hunter Moisturizer", price: 899, skin: "sensitive normal oily", img: "image/suncreamf25.avif",
+            steps: ["Apply a dime-sized amount to clean skin.", "Lightly massage in an upward motion to avoid dragging.", "Focus on oilier areas like the T-zone.", "Allow 2 minutes to absorb before applying SPF."]
+        },
+        { 
+            name: "Hunter Moisturizer", price: 899, skin: "sensitive normal oily", img: "image/suncreamf26.webp",
+            steps: ["Apply a dime-sized amount to clean skin.", "Lightly massage in an upward motion to avoid dragging.", "Focus on oilier areas like the T-zone.", "Allow 2 minutes to absorb before applying SPF."]
+        },
+        { 
+            name: "Hunter Moisturizer", price: 899, skin: "dry normal sensitive", img: "image/suncreamf27.webp",
+            steps: ["Apply to slightly damp skin after cleansing.", "Smooth a thin layer evenly across the face and neck.", "Press palms gently into skin to improve absorption.", "Apply twice daily (AM/PM) for a healthy skin barrier."]
+        },
+        { 
+            name: "Hunter Creams", price: 999, skin: "sensitive dry normal", img: "image/suncreamf28.webp",
+            steps: ["Pat onto targeted areas of clean, dry skin.", "Use fingertips to spread using light pressure.", "Wait for the product to fully absorb naturally.", "Ideal for morning/evening sealing step."]
+        },
+        { 
+            name: "Hunter Face Cream", price: 599, skin: "normal sensitive dry", img: "image/suncreamf29.avif", 
+            steps: ["Cleanse thoroughly and pat skin dry.", "Warm a pea-sized amount between fingertips.", "Apply in upward, circular motions to face and neck.", "Use as the final step in your PM routine to lock in moisture."]
+        },
+        { 
+            name: "Hunter Cleanser", price: 799, skin: "sensitive normal oily", img: "image/suncreamf30.avif",
+            steps: ["Dampen face with lukewarm water.", "Apply 1-2 pumps of cleanser to wet palms.", "Massage gently into skin for 60 seconds, avoiding eyes.", "Rinse thoroughly and pat dry with a clean towel."]
+        },
+        { 
+            name: "Hunter Face Cream", price: 599, skin: "normal sensitive dry", img: "image/suncreamf31.webp", 
+            steps: ["Cleanse thoroughly and pat skin dry.", "Warm a pea-sized amount between fingertips.", "Apply in upward, circular motions to face and neck.", "Use as the final step in your PM routine to lock in moisture."]
+        },
+        { 
+            name: "Hunter Cleanser", price: 799, skin: "sensitive normal oily", img: "image/suncreamf32.webp",
+            steps: ["Dampen face with lukewarm water.", "Apply 1-2 pumps of cleanser to wet palms.", "Massage gently into skin for 60 seconds, avoiding eyes.", "Rinse thoroughly and pat dry with a clean towel."]
+        },
+        { 
+            name: "Hunter Face Cream", price: 599, skin: "normal sensitive dry", img: "image/suncreamf33.webp", 
+            steps: ["Cleanse thoroughly and pat skin dry.", "Warm a pea-sized amount between fingertips.", "Apply in upward, circular motions to face and neck.", "Use as the final step in your PM routine to lock in moisture."]
+        },
+        { 
+            name: "Hunter Cleanser", price: 799, skin: "sensitive normal oily", img: "image/suncreamf34.jpg",
+            steps: ["Dampen face with lukewarm water.", "Apply 1-2 pumps of cleanser to wet palms.", "Massage gently into skin for 60 seconds, avoiding eyes.", "Rinse thoroughly and pat dry with a clean towel."]
+        }
+    ];
+
+    let currentOrder = {};
+    let currentRating = 0;
+
+    function initApp() {
+        const guideModal = new bootstrap.Modal(document.getElementById('skinGuideModal'));
+        guideModal.show();
+        updateCount();
+    }
+
+    function openGuide() {
+        nextStep(1);
+        new bootstrap.Modal(document.getElementById('skinGuideModal')).show();
+    }
+
+    function nextStep(n) {
+        document.querySelectorAll('.guide-step').forEach(s => s.classList.remove('active'));
+        document.getElementById('step' + n).classList.add('active');
+    }
+
+    function filterSkin(type) {
+        bootstrap.Modal.getInstance(document.getElementById('skinGuideModal'))?.hide();
+        document.getElementById('filterTitle').innerText = type.toUpperCase() + " SKIN SOLUTIONS";
+        
+        const filtered = allProducts.filter(p => p.skin.includes(type));
+        const grid = document.getElementById('filteredGrid');
+        
+        grid.innerHTML = filtered.map(p => `
+            <div class="product-card">
+                <img src="${p.img}">
+                <h3 style="color:var(--accent-gold)">${p.name}</h3>
+                <p class="mb-1">₹${p.price} | Premium Selection</p>
+                <div class="steps-box">
+                    <b>Steps to Use:</b>
+                    ${p.steps.map(s => `• ${s}`).join('<br>')}
+                </div>
+                <button class="btn-acquire" onclick="openOrderForm('${p.name}', ${p.price})">Acquire Now</button>
+            </div>
+        `).join('');
+
+        showPage('productPage');
+    }
+
+    function showPage(id) {
+        document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active-view'));
+        document.getElementById(id).classList.add('active-view');
+        if(id === 'orderPage') renderLedger();
+    }
+
+    function openOrderForm(name, price) {
+        currentOrder = { name, price };
+        document.getElementById('orderProductName').innerText = name;
+        document.getElementById('formSection').classList.remove('d-none');
+        document.getElementById('ratingSection').classList.add('d-none');
+        resetStars();
+        new bootstrap.Modal(document.getElementById('orderModal')).show();
+    }
+
+    function processOrder() {
+        const n = document.getElementById('custName').value;
+        const p = document.getElementById('custPhone').value;
+        const a = document.getElementById('custAddr').value;
+        if(!n || !p || !a) return alert("All fields are mandatory for delivery.");
+        
+        currentOrder.user = n;
+        currentOrder.phone = p;
+        currentOrder.address = a;
+
+        document.getElementById('formSection').classList.add('d-none');
+        document.getElementById('ratingSection').classList.remove('d-none');
+    }
+
+    function setRating(n) {
+        currentRating = n;
+        document.querySelectorAll('.star-rating').forEach((s, idx) => {
+            s.classList.toggle('selected', idx < n);
+        });
+    }
+
+    function resetStars() {
+        currentRating = 0;
+        document.querySelectorAll('.star-rating').forEach(s => s.classList.remove('selected'));
+    }
+
+    function finalizeAndRecord() {
+        const delivery = new Date();
+        delivery.setDate(delivery.getDate() + 3);
+
+        const record = { ...currentOrder, rating: currentRating, delivery: delivery.toDateString() };
+        let db = JSON.parse(localStorage.getItem('glowStore')) || [];
+        db.push(record);
+        localStorage.setItem('glowStore', JSON.stringify(db));
+
+        bootstrap.Modal.getInstance(document.getElementById('orderModal')).hide();
+        updateCount();
+        showPage('orderPage');
+    }
+
+    function renderLedger() {
+        const db = JSON.parse(localStorage.getItem('glowStore')) || [];
+        const cont = document.getElementById('ledgerContainer');
+        if(db.length === 0) return cont.innerHTML = "<p class='text-center opacity-50'>No imperial records found.</p>";
+
+        cont.innerHTML = db.reverse().map(o => `
+            <div class="order-item">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h4 style="color: var(--royal-gold)">${o.name}</h4>
+                        <p class="mb-1">${o.user} | ${o.phone}</p>
+                        <p class="mb-1 small opacity-75">${o.address}</p>
+                        <div class="text-warning">${'★'.repeat(o.rating)}${'☆'.repeat(5-o.rating)}</div>
+                    </div>
+                    <div class="text-end small">
+                        <span class="badge border border-success text-success">Confirmed</span><br>
+                        <span class="text-info">Expected: ${o.delivery}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function updateCount() {
+        const db = JSON.parse(localStorage.getItem('glowStore')) || [];
+        document.getElementById('cartCount').innerText = db.length;
+    }
+</script>
+
+</body>
+</html>

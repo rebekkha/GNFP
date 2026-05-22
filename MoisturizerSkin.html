@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="image/Screenshot 2025-05-16 161600 (1).png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlowNext | Imperial Collection</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --royal-gold: #c79b2a;
+            --deep-brown: #08082a;
+            --glass-brown: rgba(10, 8, 38, 0.85);
+            --accent-gold: #e0be55;
+            --rich-brown: #0b0b34;
+            --cream: #f6efe6;
+        }
+
+        body {
+            margin: 0; padding: 0; min-height: 100vh;
+            font-family: 'Garamond', serif; color: var(--cream);
+            background: linear-gradient(135deg, var(--deep-brown) 0%, var(--rich-brown) 60%, #07173b 100%);
+            background-attachment: fixed;
+        }
+
+        /* Navbar */
+        .navbar-custom { padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(20,12,8,0.6); border-bottom: 1px solid var(--royal-gold); }
+        .nav-icon { font-size: 28px; color: var(--royal-gold); cursor: pointer; transition: 0.3s; }
+        .nav-icon:hover { transform: scale(1.1); color: var(--accent-gold); }
+
+        /* Premium Seamless Banner Slider */
+        .banner-carousel {
+            width: 100%;
+            background: #140c08;
+            border-bottom: 2px solid var(--royal-gold);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        .banner-carousel .carousel-item {
+            width: 100%;
+            aspect-ratio: 415 / 100; 
+            overflow: hidden;
+        }
+        .banner-carousel .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+        }
+
+        /* Golden Custom Controls for Banner Buttons */
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-image: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'bootstrap-icons';
+            font-size: 2rem;
+            color: var(--royal-gold);
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .carousel-control-prev-icon::before { content: "\f22f"; } /* Chevron left icon */
+        .carousel-control-next-icon::before { content: "\f231"; } /* Chevron right icon */
+
+        .banner-carousel .carousel-control-prev:hover .carousel-control-prev-icon,
+        .banner-carousel .carousel-control-next:hover .carousel-control-next-icon {
+            color: var(--accent-gold);
+            transform: scale(1.15);
+        }
+
+        /* Navigation Cards */
+        .skin-type-card {
+            background: var(--glass-brown);
+            border: 2px solid var(--royal-gold);
+            border-radius: 15px;
+            padding: 25px;
+            cursor: pointer;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            height: 100%;
+            text-align: center;
+            color: var(--cream);
+        }
+        .skin-type-card:hover { transform: translateY(-10px); background: var(--royal-gold); color: var(--deep-brown); }
+
+        /* Product Cards */
+        .product-card {
+            width: 320px; padding: 20px; margin: 15px; text-align: center;
+            background: var(--glass-brown); backdrop-filter: blur(8px);
+            border: 1.5px solid rgba(199, 155, 42, 0.25); border-radius: 20px;
+            display: flex; flex-direction: column;
+        }
+        .product-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 10px; border: 1px solid var(--royal-gold); margin-bottom: 15px; background: var(--cream); }
+        
+        .steps-box { text-align: left; background: rgba(255, 250, 240, 0.04); padding: 10px; border-radius: 8px; margin-top: 15px; font-size: 0.95em; border: 0.5px solid rgba(199,155,42,0.12); }
+        .steps-box b { color: var(--royal-gold); display: block; margin-bottom: 5px; }
+
+        .btn-acquire {
+            background: linear-gradient(180deg, var(--accent-gold), #b8860b);
+            border: none; color: var(--deep-brown); font-weight: bold;
+            border-radius: 50px; padding: 10px 25px; width: 100%;
+            margin-top: 15px; transition: 0.3s; box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+        }
+        .btn-acquire:hover { opacity: 0.95; transform: translateY(-2px); }
+
+        .page-view { transition: 0.5s; display: none; }
+        .active-view { display: block; }
+        
+        .order-item {
+            border-left: 4px solid var(--royal-gold);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px; margin-bottom: 15px; border-radius: 0 15px 15px 0;
+        }
+
+        .modal-content { background: var(--deep-brown); border: 2px solid var(--royal-gold); border-radius: 20px; color: var(--cream); }
+        .form-control { background: #fff8f0; border: none; margin-bottom: 15px; padding: 12px; color: #4a2e18; border-radius: 8px; }
+        .guide-step { display: none; }
+        .guide-step.active { display: block; }
+        .star-rating { font-size: 30px; color: #444444; cursor: pointer; }
+        .star-rating.selected { color: var(--royal-gold); }
+    </style>
+</head>
+<body onload="initApp()">
+
+<nav class="navbar-custom">
+    <div>
+        <i class="bi bi-info-circle nav-icon me-3" onclick="openGuide()"></i>
+        <i class="bi bi-house-door nav-icon" onclick="showPage('homePage')"></i>
+    </div>
+    <h2 style="color: var(--royal-gold); letter-spacing: 4px; font-weight: bold; margin: 0;">GLOWNEXT</h2>
+    <div class="position-relative" onclick="showPage('orderPage')" style="cursor: pointer;">
+        <i class="bi bi-cart-fill nav-icon"></i>
+        <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 10px;">0</span>
+    </div>
+</nav>
+
+<div id="topBannerCarousel" class="carousel slide banner-carousel" data-bs-ride="carousel" data-bs-interval="4000">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="image/moisturbenar6.png" alt="Shaadi Gift Pack Banner">
+        </div>
+        <div class="carousel-item">
+            <img src="image/moisturbaner7.webp" alt="Imperial Collection Luxury Pack">
+        </div>
+        <div class="carousel-item">
+            <img src="image/moisturbenar9.webp" alt="Premium Face Formulations">
+        </div>
+        <div class="carousel-item">
+            <img src="image/moisturbenar8.avif" alt="GlowNext Bridal Radiance">
+        </div>
+    </div>
+    
+    <button class="carousel-control-prev" type="button" data-bs-target="#topBannerCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#topBannerCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+<div class="modal fade" id="skinGuideModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body p-5 text-center">
+                <div id="step1" class="guide-step active">
+                    <h2 style="color: var(--royal-gold)">Identify Your Glow</h2>
+                    <p class="mt-3">Welcome to the Imperial Collection. Let's find your biological match.</p>
+                    <button class="btn-acquire" onclick="nextStep(2)">Analyze Skin <i class="bi bi-arrow-right"></i></button>
+                </div>
+                
+                <div id="step2" class="guide-step">
+                    <h4 style="color: var(--royal-gold)">Normal & Oily Types</h4>
+                    <div class="text-start mt-3">
+                        <p><b>Normal:</b> Smooth texture, balanced moisture.</p>
+                        <p><b>Oily:</b> Greasy shine, prone to breakouts.</p>
+                    </div>
+                    <div class="d-flex gap-2 mt-4">
+                        <button class="btn btn-outline-light w-50" onclick="nextStep(1)">Back</button>
+                        <button class="btn btn-warning w-50" onclick="nextStep(3)">Next</button>
+                    </div>
+                </div>
+
+                <div id="step3" class="guide-step">
+                    <h4 style="color: var(--royal-gold)">Dry & Sensitive Types</h4>
+                    <div class="text-start mt-3">
+                        <p><b>Dry:</b> Tight feeling, flaky patches.</p>
+                        <p><b>Sensitive:</b> Redness, itching, reacts easily.</p>
+                    </div>
+                    <div class="d-flex gap-2 mt-4">
+                        <button class="btn btn-outline-light w-50" onclick="nextStep(2)">Back</button>
+                        <button class="btn btn-warning w-50" onclick="nextStep(4)">Finish</button>
+                    </div>
+                </div>
+
+                <div id="step4" class="guide-step">
+                    <h3 style="color: var(--royal-gold)">Choose Your Journey</h3>
+                    <div class="row g-2 mt-3">
+                        <div class="col-6"><button class="btn btn-outline-warning w-100" onclick="filterSkin('dry')">Dry</button></div>
+                        <div class="col-6"><button class="btn btn-outline-warning w-100" onclick="filterSkin('oily')">Oily</button></div>
+                        <div class="col-6"><button class="btn btn-outline-warning w-100" onclick="filterSkin('sensitive')">Sensitive</button></div>
+                        <div class="col-6"><button class="btn btn-outline-warning w-100" onclick="filterSkin('normal')">Normal</button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="homePage" class="page-view active-view container py-5">
+    <h1 class="text-center mb-5" style="color: var(--royal-gold); font-size: 2.5rem; text-shadow: 2px 2px 10px #000;">Women's Imperial Skin Care</h1>
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-4 col-lg-2"><div class="skin-type-card" onclick="filterSkin('normal')"><h4>Normal</h4></div></div>
+        <div class="col-md-4 col-lg-2"><div class="skin-type-card" onclick="filterSkin('oily')"><h4>Oily</h4></div></div>
+        <div class="col-md-4 col-lg-2"><div class="skin-type-card" onclick="filterSkin('dry')"><h4>Dry</h4></div></div>
+        <div class="col-md-4 col-lg-2"><div class="skin-type-card" onclick="filterSkin('sensitive')"><h4>Sensitive</h4></div></div>
+    </div>
+</div>
+
+<div id="productPage" class="page-view container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5 border-bottom pb-3 border-secondary">
+        <h2 id="filterTitle" style="color: var(--royal-gold)">Recommended Solutions</h2>
+        <button class="btn btn-outline-warning rounded-pill" onclick="showPage('homePage')">Back to Selection</button>
+    </div>
+    <div class="d-flex flex-wrap justify-content-center" id="filteredGrid"></div>
+</div>
+
+<div id="orderPage" class="page-view container py-5">
+    <div class="p-5" style="background: rgba(0,0,0,0.7); border-radius: 30px; border: 1px solid var(--royal-gold);">
+        <h2 class="text-center mb-5" style="color: var(--royal-gold)">Royal Order Ledger</h2>
+        <div id="ledgerContainer"></div>
+        <div class="text-center mt-5">
+            <button class="btn btn-warning px-5 rounded-pill" onclick="showPage('homePage')">Return to Gallery</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="orderModal" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body p-4">
+                <div id="formSection">
+                    <h3 id="orderProductName" class="text-center mb-4" style="color: var(--royal-gold)">Order Product</h3>
+                    <input type="text" id="custName" class="form-control" placeholder="Full Name">
+                    <input type="tel" id="custPhone" class="form-control" placeholder="Phone Number">
+                    <textarea id="custAddr" class="form-control" rows="3" placeholder="Full Shipping Address"></textarea>
+                    <button class="btn-acquire" onclick="processOrder()">Confirm Purchase</button>
+                    <button class="btn btn-link w-100 text-white mt-2" data-bs-dismiss="modal">Cancel</button>
+                </div>
+                <div id="ratingSection" class="text-center d-none">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                    <h3 class="mt-3">Order Recorded</h3>
+                    <p>Rate this Imperial Product:</p>
+                    <div class="mb-4">
+                        <i class="bi bi-star-fill star-rating" onclick="setRating(1)"></i>
+                        <i class="bi bi-star-fill star-rating" onclick="setRating(2)"></i>
+                        <i class="bi bi-star-fill star-rating" onclick="setRating(3)"></i>
+                        <i class="bi bi-star-fill star-rating" onclick="setRating(4)"></i>
+                        <i class="bi bi-star-fill star-rating" onclick="setRating(5)"></i>
+                    </div>
+                    <button class="btn-acquire" onclick="finalizeAndRecord()">View History</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const allProducts = [
+         { 
+
+        name: "L'Oréal Revitalift", price: 599, skin: "sensitive normal", img: "image/moisturi1.webp",
+
+        steps: ["Cleanse face thoroughly and pat dry.", "Apply a pea-sized amount evenly onto face and neck.", "Massage gently in upward strokes until fully absorbed.", "Use morning and evening for optimum firming results."]
+
+    },
+
+    { 
+
+        name: "Olay Regenerist MAX", price: 799, skin: "dry combination", img: "image/moisturi2.webp",
+
+        steps: ["Smooth evenly over freshly cleansed face and neck.", "Focus on areas prone to fine lines like forehead and jawline.", "Press firmly with fingertips to stimulate deep penetration.", "Apply daily as your principal morning moisturizing shield."]
+
+    },
+
+    { 
+
+        name: "Neutrogena Hydro Boost", price: 899, skin: "dry sensitive", img: "image/moisturi3.webp",
+
+        steps: ["Apply uniformly to face and neck after your cleansing routine.", "Distribute evenly and let the water-gel consistency cool skin.", "Tap lightly with ring fingers around delicate zones.", "Ideal for locking in dynamic hydration throughout the day."]
+
+    },
+
+    { 
+
+        name: "NIVEA Soft", price: 299, skin: "normal dry", img: "image/moisturi5.webp",
+
+        steps: ["Scoop a generous amount with clean fingertips.", "Rub hands together to warm and activate the formulation.", "Massage smoothly into face, hands, and body as needed.", "Reapply to dry patches over the course of the day."]
+
+    },
+
+    { 
+
+        name: "Cetaphil Moisturising", price: 399, skin: "dry sensitive", img: "image/mostiuri6.jpg",
+
+        steps: ["Apply immediately after bathing or washing to trap moisture.", "Spread a lightweight layer over hyper-sensitive zones.", "Allow to set naturally for two minutes before styling.", "Use daily for long-lasting skin barrier preservation."]
+
+    },
+
+    { 
+
+        name: "Simple Repairing Rich", price: 799, skin: "dry sensitive", img: "image/mosituri11.jpg",
+
+        steps: ["Gently warm a small dollop between your palms.", "Smooth onto face and neck using soft, circular paths.", "Avoid harsh pulling or tugging actions on dry spots.", "Perfect for deep barrier conditioning during your night routine."]
+
+    },
+
+    { 
+
+        name: "Lotus WhiteGlow", price: 399, skin: "normal brightening", img: "image/moisturi12.webp",
+
+        steps: ["Wash face cleanly with a brightening foam wash.", "Dot the gel-cream surface across your entire face configuration.", "Smooth outward into hairline and down your neck line.", "Apply every morning to counter environmental stress fields."]
+
+    },
+
+    { 
+
+        name: "L'Oréal Revitalift", price: 599, skin: "sensitive all", img: "image/moisturi1.webp",
+
+        steps: ["Cleanse face thoroughly and pat dry.", "Apply a pea-sized amount evenly onto face and neck.", "Massage gently in upward strokes until fully absorbed.", "Use morning and evening for optimum firming results."]
+
+    },
+
+    { 
+
+        name: "Neutrogena Hydro Boost", price: 899, skin: "extra-dry sensitive", img: "image/moisturi3.webp",
+
+        steps: ["Apply uniformly to face and neck after your cleansing routine.", "Distribute evenly and let the water-gel consistency cool skin.", "Tap lightly with ring fingers around delicate zones.", "Ideal for locking in dynamic hydration throughout the day."]
+
+    },
+
+    { 
+
+        name: "L'Oréal Age Perfect", price: 399, skin: "mature dull all", img: "image/moisturi4.webp",
+
+        steps: ["Warm a dime-sized layer between your fingertips.", "Press into skin gently from the center of the face outwards.", "Incorporate into your daily routine to fix dull structural look.", "Use continuously to support skin elasticity profiles."]
+
+    },
+
+    { 
+
+        name: "NIVEA Soft", price: 299, skin: "dry normal all", img: "image/moisturi5.webp",
+
+        steps: ["Scoop a generous amount with clean fingertips.", "Rub hands together to warm and activate the formulation.", "Massage smoothly into face, hands, and body as needed.", "Reapply to dry patches over the course of the day."]
+
+    },
+
+    { 
+
+        name: "Cetaphil Moisturising", price: 399, skin: "dry normal sensitive", img: "image/mostiuri6.jpg",
+
+        steps: ["Apply immediately after bathing or washing to trap moisture.", "Spread a lightweight layer over hyper-sensitive zones.", "Allow to set naturally for two minutes before styling.", "Use daily for long-lasting skin barrier preservation."]
+
+    },
+
+    { 
+
+        name: "Mamaearth Rice Dewy", price: 799, skin: "all brightening", img: "image/moisturi7.webp",
+
+        steps: ["Pump out a sufficient measure of dewy lotion matrix.", "Massage evenly onto your face to enhance glass skin look.", "Let it absorb fully to discover an even-toned brightness.", "Apply twice daily before stacking sunscreen or makeup layers."]
+
+    },
+
+    { 
+
+        name: "Joy Skin Fruits", price: 799, skin: "all glow", img: "image/moisturi8.webp",
+
+        steps: ["Cleanse skin surface area with standard lukewarm water.", "Apply smoothly onto face using balanced upward palm passes.", "Focus on lackluster areas to stimulate microcirculation.", "Use morning and afternoon to sustain fruit-derived glow benefits."]
+
+    },
+
+    { 
+
+        name: "Oliva Hydrating", price: 399, skin: "dry sensitive", img: "image/moisturi9.webp",
+
+        steps: ["Apply to slightly damp face properties to compound water seal.", "Distribute a fine layer covering vulnerable structural fields.", "Allow deep absorption process to resolve flaky tendencies.", "Employ morning and night to balance overall moisture retention."]
+
+    },
+
+    { 
+
+        name: "Naturali Aqua Gel", price: 799, skin: "oily combination sensitive", img: "image/mosituri10.jpg",
+
+        steps: ["Cleanse face thoroughly to clean away trapped sebum.", "Apply a micro-measure of gel across the T-zone configuration.", "Massage using featherlight sweeps to minimize pore pressure.", "Use before setting SPF for non-greasy matte management."]
+
+    },
+
+    { 
+
+        name: "Naturali Aqua Gel", price: 799, skin: "oily combination sensitive", img: "image/mosituri18.webp",
+
+        steps: ["Cleanse face thoroughly to clean away trapped sebum.", "Apply a micro-measure of gel across the T-zone configuration.", "Massage using featherlight sweeps to minimize pore pressure.", "Use before setting SPF for non-greasy matte management."]
+
+    },
+
+    { 
+
+        name: "Naturali Aqua Gel", price: 799, skin: "oily combination sensitive", img: "image/mosituri19.jpg",
+
+        steps: ["Cleanse face thoroughly to clean away trapped sebum.", "Apply a micro-measure of gel across the T-zone configuration.", "Massage using featherlight sweeps to minimize pore pressure.", "Use before setting SPF for non-greasy matte management."]
+
+    },
+
+    { 
+
+        name: "Naturali Aqua Gel", price: 799, skin: "oily combination sensitive", img: "image/mosituri20.jpeg",
+
+        steps: ["Cleanse face thoroughly to clean away trapped sebum.", "Apply a micro-measure of gel across the T-zone configuration.", "Massage using featherlight sweeps to minimize pore pressure.", "Use before setting SPF for non-greasy matte management."]
+
+    },
+
+    { 
+
+        name: "Naturali Aqua Gel", price: 799, skin: "oily combination sensitive", img: "image/moisturi21.webp",
+
+        steps: ["Cleanse face thoroughly to clean away trapped sebum.", "Apply a micro-measure of gel across the T-zone configuration.", "Massage using featherlight sweeps to minimize pore pressure.", "Use before setting SPF for non-greasy matte management."]
+
+    },
+
+    { 
+
+        name: "Naturali Aqua Gel", price: 799, skin: "oily combination sensitive", img: "image/moisturi22.jpg",
+
+        steps: ["Cleanse face thoroughly to clean away trapped sebum.", "Apply a micro-measure of gel across the T-zone configuration.", "Massage using featherlight sweeps to minimize pore pressure.", "Use before setting SPF for non-greasy matte management."]
+
+    },
+
+    { 
+
+        name: "Naturali Aqua Gel", price: 799, skin: "oily combination sensitive", img: "image/moisturi23.jpg",
+
+        steps: ["Cleanse face thoroughly to clean away trapped sebum.", "Apply a micro-measure of gel across the T-zone configuration.", "Massage using featherlight sweeps to minimize pore pressure.", "Use before setting SPF for non-greasy matte management."]
+
+    },
+
+    { 
+
+        name: "Naturali Aqua Gel", price: 799, skin: "oily combination sensitive", img: "image/moisturi24.jpeg",
+
+        steps: ["Cleanse face thoroughly to clean away trapped sebum.", "Apply a micro-measure of gel across the T-zone configuration.", "Massage using featherlight sweeps to minimize pore pressure.", "Use before setting SPF for non-greasy matte management."]
+
+    },
+
+    { 
+
+        name: "Naturali Aqua Gel", price: 799, skin: "oily combination sensitive", img: "image/moisturi25.webp",
+
+        steps: ["Cleanse face thoroughly to clean away trapped sebum.", "Apply a micro-measure of gel across the T-zone configuration.", "Massage using featherlight sweeps to minimize pore pressure.", "Use before setting SPF for non-greasy matte management."]
+
+    },
+
+    { 
+
+        name: "Naturali Aqua Gel", price: 799, skin: "oily combination sensitive", img: "image/moisturi26.webp",
+
+        steps: ["Cleanse face thoroughly to clean away trapped sebum.", "Apply a micro-measure of gel across the T-zone configuration.", "Massage using featherlight sweeps to minimize pore pressure.", "Use before setting SPF for non-greasy matte management."]
+
+    },
+
+    { 
+
+        name: "Naturali Aqua Gel", price: 799, skin: "oily combination sensitive", img: "image/moisturi27.webp",
+
+        steps: ["Cleanse face thoroughly to clean away trapped sebum.", "Apply a micro-measure of gel across the T-zone configuration.", "Massage using featherlight sweeps to minimize pore pressure.", "Use before setting SPF for non-greasy matte management."]
+
+    },
+
+    { 
+
+        name: "Naturali Aqua Gel", price: 799, skin: "oily combination sensitive", img: "image/moisturi28.jpg",
+
+        steps: ["Cleanse face thoroughly to clean away trapped sebum.", "Apply a micro-measure of gel across the T-zone configuration.", "Massage using featherlight sweeps to minimize pore pressure.", "Use before setting SPF for non-greasy matte management."]
+
+    },
+
+    { 
+
+        name: "Simple Repairing Rich", price: 799, skin: "dry sensitive barrier-care", img: "image/mosituri11.jpg",
+
+        steps: ["Gently warm a small dollop between your palms.", "Smooth onto face and neck using soft, circular paths.", "Avoid harsh pulling or tugging actions on dry spots.", "Perfect for deep barrier conditioning during your night routine."]
+
+    },
+
+    { 
+
+        name: "Swiss Beauty Dew Lock", price: 799, skin: "all sensitive soothing", img: "image/mosituri13.webp",
+
+        steps: ["Prep your facial profile cleanly to receive maximum soothing treatment.", "Apply small increments to zones with noticeable dehydration signals.", "Tap gently to create an active dew lock hydration seal.", "Excellent for priming sensitive skin types prior to cosmetological adjustments."]
+
+    },
+
+    { 
+
+        name: "Dermedic Hydrain", price: 399, skin: "extra-dry dehydrated", img: "image/mosituri14.webp",
+
+        steps: ["Dispense cream across targeted dry facial infrastructure elements.", "Distribute evenly to relieve any uncomfortable dry tightness feel.", "Press with soft palm pressure down to skin layer level to enhance absorption.", "Reapply regularly to extra-dry sectors for lasting skin flexibility."]
+
+    },
+
+    { 
+
+        name: "Pond's Dry Skin Cream", price: 399, skin: "dry sensitive", img: "image/mosituri15.avif",
+
+        steps: ["Cleanse face completely and remove any leftover surface buildup.", "Apply a rich layer covering areas prone to flaky variations.", "Massage in upward circular configurations over face structures.", "Incorporate as your fundamental final step in evening structural maintenance."]
+
+    },
+
+    { 
+
+        name: "Lakmé Peach Milk", price: 799, skin: "all non-sticky", img: "image/mosituri16.webp",
+
+        steps: ["Pour out an adequate volume of light fluid mix.", "Apply with smooth hand strokes over face and shoulder zones.", "Feel the non-sticky protective barrier blend away efficiently.", "Incorporate daily for a consistent soft-textured finish."]
+
+    },
+
+    { 
+
+        name: "Dot & Key Glow", price: 799, skin: "all dullness-prone", img: "image/mosituri17.avif",
+
+        steps: ["Apply onto clean skin surface layouts to fix dull visual parameters.", "Smooth and balance the material properties out to lower edges.", "Let it activate to establish a luminous premium appearance level.", "Use before daily work sequences to guarantee top-tier aesthetic glow values."]
+
+    }
+
+];
+
+    let currentOrder = {};
+    let currentRating = 0;
+
+    function initApp() {
+        const guideModal = new bootstrap.Modal(document.getElementById('skinGuideModal'));
+        guideModal.show();
+        updateCount();
+    }
+
+    function openGuide() {
+        nextStep(1);
+        new bootstrap.Modal(document.getElementById('skinGuideModal')).show();
+    }
+
+    function nextStep(n) {
+        document.querySelectorAll('.guide-step').forEach(s => s.classList.remove('active'));
+        document.getElementById('step' + n).classList.add('active');
+    }
+
+    function filterSkin(type) {
+        bootstrap.Modal.getInstance(document.getElementById('skinGuideModal'))?.hide();
+        document.getElementById('filterTitle').innerText = type.toUpperCase() + " SKIN SOLUTIONS";
+        
+        const filtered = allProducts.filter(p => p.skin.includes(type));
+        const grid = document.getElementById('filteredGrid');
+        
+        grid.innerHTML = filtered.map(p => `
+            <div class="product-card">
+                <img src="${p.img}">
+                <h3 style="color:var(--accent-gold)">${p.name}</h3>
+                <p class="mb-1">₹${p.price} | Premium Selection</p>
+                <div class="steps-box">
+                    <b>Steps to Use:</b>
+                    ${p.steps.map(s => `• ${s}`).join('<br>')}
+                </div>
+                <button class="btn-acquire" onclick="openOrderForm('${p.name}', ${p.price})">Acquire Now</button>
+            </div>
+        `).join('');
+
+        showPage('productPage');
+    }
+
+    function showPage(id) {
+        document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active-view'));
+        document.getElementById(id).classList.add('active-view');
+        if(id === 'orderPage') renderLedger();
+    }
+
+    function openOrderForm(name, price) {
+        currentOrder = { name, price };
+        document.getElementById('orderProductName').innerText = name;
+        document.getElementById('formSection').classList.remove('d-none');
+        document.getElementById('ratingSection').classList.add('d-none');
+        resetStars();
+        new bootstrap.Modal(document.getElementById('orderModal')).show();
+    }
+
+    function processOrder() {
+        const n = document.getElementById('custName').value;
+        const p = document.getElementById('custPhone').value;
+        const a = document.getElementById('custAddr').value;
+        if(!n || !p || !a) return alert("All fields are mandatory for delivery.");
+        
+        currentOrder.user = n;
+        currentOrder.phone = p;
+        currentOrder.address = a;
+
+        document.getElementById('formSection').classList.add('d-none');
+        document.getElementById('ratingSection').classList.remove('d-none');
+    }
+
+    function setRating(n) {
+        currentRating = n;
+        document.querySelectorAll('.star-rating').forEach((s, idx) => {
+            s.classList.toggle('selected', idx < n);
+        });
+    }
+
+    function resetStars() {
+        currentRating = 0;
+        document.querySelectorAll('.star-rating').forEach(s => s.classList.remove('selected'));
+    }
+
+    function finalizeAndRecord() {
+        const delivery = new Date();
+        delivery.setDate(delivery.getDate() + 3);
+
+        const record = { ...currentOrder, rating: currentRating, delivery: delivery.toDateString() };
+        let db = JSON.parse(localStorage.getItem('glowStore')) || [];
+        db.push(record);
+        localStorage.setItem('glowStore', JSON.stringify(db));
+
+        bootstrap.Modal.getInstance(document.getElementById('orderModal')).hide();
+        updateCount();
+        showPage('orderPage');
+    }
+
+    function renderLedger() {
+        const db = JSON.parse(localStorage.getItem('glowStore')) || [];
+        const cont = document.getElementById('ledgerContainer');
+        if(db.length === 0) return cont.innerHTML = "<p class='text-center opacity-50'>No imperial records found.</p>";
+
+        cont.innerHTML = db.reverse().map(o => `
+            <div class="order-item">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h4 style="color: var(--royal-gold)">${o.name}</h4>
+                        <p class="mb-1">${o.user} | ${o.phone}</p>
+                        <p class="mb-1 small opacity-75">${o.address}</p>
+                        <div class="text-warning">${'★'.repeat(o.rating)}${'☆'.repeat(5-o.rating)}</div>
+                    </div>
+                    <div class="text-end small">
+                        <span class="badge border border-success text-success">Confirmed</span><br>
+                        <span class="text-info">Expected: ${o.delivery}</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function updateCount() {
+        const db = JSON.parse(localStorage.getItem('glowStore')) || [];
+        document.getElementById('cartCount').innerText = db.length;
+    }
+</script>
+
+</body>
+</html>
